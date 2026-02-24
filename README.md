@@ -1,83 +1,129 @@
-﻿# Titan Board SDIO Wi-Fi (CYWL6208-GS / CYW43438)
+﻿# 基于 RA8P1 + Ethos-U55 的多模型协同智能门禁系统
 
-[English] | [中文](README_zh.md)
+[中文] | [English](README.md)
 
-RT-Thread example project for **Titan Board (Renesas RA8 series)**. It uses **SDHI (r_sdhi)** as an **SDIO host** to drive the **CYWL6208-GS Wi-Fi module** (chip **CYW43438**) and provides TCP/IP networking via **WHD + lwIP**.
+## 项目简介
 
-## Hardware
+本项目面向边缘智能门禁场景，基于 RA8P1 + Ethos-U55 实现三阶段安全链路：
 
-- Titan Board (RA8 series)
-- CYWL6208-GS (CYW43438), SDIO 4-bit mode
+- 人脸检测
+- 人脸识别
+- 手势确认
 
-## Toolchain
+在资源受限 MCU 平台上实现了识别、确认、告警、开门、运维可视化的完整闭环，目标是可部署、可维护、可追溯，而不仅是单点 Demo。
 
-- RT-Thread Studio (recommended)
-- Serial terminal with **YMODEM** (e.g. Xshell)
+## 核心能力
 
-## Build & Download
+- 三阶段门禁逻辑：检测 -> 识别 -> 手势确认
+- 多模型稳定切换：NPU 所有权仲裁 + 切换前强制回收
+- 板端主动同步：控制拉取 + 运行态上报
+- 人脸库持久化：支持录入、保存、清库
+- Web 运维：视频、状态、控制、事件统一看板
+- 弱网鲁棒：图传链路与控制链路解耦
 
-1. Open this project in RT-Thread Studio.
-2. Install required RT-Thread packages (e.g. WHD) via the package manager.
-3. Build and download via the board's USB-DBG port.
+## 硬件与软件架构
 
-## Wi-Fi Firmware (first boot)
+### 硬件
 
-If the terminal prints firmware read errors, download the Wi-Fi firmware into Flash via YMODEM:
+- 主控：RA8P1（RT-Thread）
+- AI 加速：Ethos-U55 NPU
+- 感知：摄像头（QVGA）
+- 显示：ST7789 LCD
+- 网络：WiFi（WHD + LwIP）
+- 执行器：门锁 LED（P613）、蜂鸣器（PA07）
+- 存储：OSPI Flash + 文件系统（模型和人脸库）
 
-1. Run whd_res_download whd_firmware, then send irmware/43438A1.bin
-2. Run whd_res_download whd_clm, then send irmware/43438A1.clm_blob
+### 软件
 
-## Connect & Test
+- 固件主入口：src/hal_entry.c
+- PC 运维服务：script/pc_stream_server.py
+- 模型文件：
+  - /emb/mobilefacenet_u55.bin
+  - /gesture/gesture_u55.bin
 
-- Join AP: wifi join <ssid> <password>
-- Ping test: ping baidu.com
+## 业务流程
 
-## Notes
+### 启动流程
 
-- Flash/partition configuration references the Titan_component_flash_fs project (not included here).
-- This repo does not vendor t-thread/ by default. When cloning from GitHub, use RT-Thread Studio to fetch the RT-Thread sources/packages required by this project.
+1. HyperRAM 初始化
+2. GPIO 初始化（LED、蜂鸣器、按键）
+3. 文件系统初始化并挂载
+4. 加载人脸库（可选）
+5. LCD 初始化与开机测试
+6. 摄像头初始化（RGB565 + QVGA）
+7. NPU 初始化
+8. 启动线程：WiFi 自动连接、视频推流、板端 WebServer
+9. 进入主循环：采集、推理、显示、上报、控制
 
-## Directory
+### 解锁流程
 
-- src/: application code
-- a/, a_cfg/, a_gen/: Renesas FSP generated code/config
-- irmware/: CYW43438 firmware & CLM blob
-- igures/: screenshots
+1. 人脸检测进入候选
+2. 人脸 embedding 比对并稳定判定
+3. 多次匹配达到阈值后进入手势窗口
+4. 手势达标后开门（保持 3 秒）
+5. 超时或失败回退并可触发告警
 
-<details>
-<summary>FSP / RT-Thread configuration screenshots (reference)</summary>
+## 运维与接口
 
-### Hardware
+### 板端 WebServer（设备侧）
 
-![titan-board](figures/image-20251015150921149.png)
+- 端口：80
+- 功能：本地预览、抓图、运行态读取、控制参数更新
 
-### FSP
+### PC 运维台（Flask）
 
-- Configure Flash first (see the README in the Titan_component_flash_fs project).
-- Configure SDHI1 and add a new _sdhi stack:
+- 端口：8080（控制与看板）
+- 视频接收端口：9000
+- 特点：板端主动拉取控制、主动上报状态，减少反向请求超时
 
-![sdhi-stack-add](figures/image-20250814182233963.png)
+### 可视化反馈
 
-- Configure the _sdhi stack:
+- LCD：识别阶段、确认窗口、开门状态、告警提示
+- LED：开门状态指示，支持网页 on/off/auto 覆盖
+- 蜂鸣器：开门成功音效、失败告警音效、运维测试音
+- 事件流：门状态、告警、人脸通过、手势状态
 
-![sdhi-stack-config](figures/image-20250814182438095.png)
+## 工程亮点
 
-- Configure SDHI1 pins:
+- 安全性：多因子串联，降低误开风险
+- 稳定性：NPU 切换收敛，规避 wait timeout 与冻结
+- 可维护性：模型文件化部署、运行态接口、事件追踪
+- 工程化：从算法、固件、通信到前端的完整系统实现
 
-![sdhi-pins](figures/image-20250814182521412.png)
+## 实测表现（开发日志）
 
-### RT-Thread Settings
+- 人脸 embedding：约 300 到 350 ms
+- 手势推理：约 167 到 204 ms
+- WiFi 连通后可持续执行图传、控制、上报、事件刷新
 
-- Enable OSPI Flash:
+注：以上指标与现场条件有关，不做脱离场景的绝对承诺。
 
-![ospi-flash](figures/image-20250902114910935.png)
+## 快速开始
 
-- Set SDHI1 bus width to 4:
+1. 用 RT-Thread Studio 打开工程
+2. 配置并编译下载到开发板
+3. 连接 WiFi，确认板端与 PC 运维台可互通
+4. 准备模型文件与人脸库
+5. 启动识别链路并通过网页观察状态与事件
 
-![sdhi-buswidth](figures/image-20250814182739756.png)
+## 常见问题
 
-- Configure the WHD package:
+### 为什么不用单模型直接开门
 
-![whd](figures/image-20250814183231268.png)
+单模型安全边界不足。三阶段链路在通行效率与安全性之间取得更稳妥平衡。
 
-</details>
+### 为什么网页控制更稳定
+
+采用板端主动拉取控制参数 + 主动上报运行态，规避了反向请求在局域网中的超时问题。
+
+### 如何证明不是 Demo
+
+系统具备模型部署、状态可视化、事件追溯、异常回退、参数可调等可交付能力，可用于真实门禁场景验证与迭代。
+
+## 目录建议
+
+- src：核心业务与推理调度
+- script：PC 运维服务与工具
+- firmware：设备固件资源
+- figures：界面与流程截图
+- docs：补充设计文档

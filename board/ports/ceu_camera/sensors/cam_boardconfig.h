@@ -1,0 +1,6 @@
+#ifndef __CEU_CAMERA_SENSORS_CAM_BOARDCONFIG_H__
+#define __CEU_CAMERA_SENSORS_CAM_BOARDCONFIG_H__
+
+#include "../cam_boardconfig.h"
+
+#endif /* __CEU_CAMERA_SENSORS_CAM_BOARDCONFIG_H__ */

@@ -1,0 +1,53 @@
+import os
+from building import *
+
+src = []
+objs = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd]
+
+def use_classifier_from_header():
+    header = os.path.abspath(os.path.join(cwd, '..', 'model_select.h'))
+    try:
+        with open(header, 'r', encoding='utf-8') as f:
+            for line in f:
+                if 'APP_USE_CLASSIFIER' in line and '1' in line:
+                    return True
+    except Exception:
+        pass
+    return False
+
+use_classifier = use_classifier_from_header()
+
+if use_classifier:
+    cls_dir = os.path.abspath(os.path.join(cwd, '..', 'models_classifier'))
+    src = [
+        # Face embedding (MobileFaceNet) pipeline: CPU preprocess/quantize + NPU + CPU dequantize
+        os.path.join(cls_dir, 'model.c'),
+        os.path.join(cls_dir, 'compute_sub_0000.c'),
+        os.path.join(cls_dir, 'compute_sub_0002.c'),
+        os.path.join(cls_dir, 'sub_0001_command_stream.c'),
+        os.path.join(cls_dir, 'sub_0001_invoke.c'),
+        os.path.join(cls_dir, 'sub_0001_model_data.c'),
+        os.path.join(cls_dir, 'sub_0001_tensors.c'),
+        os.path.join(cls_dir, 'kernel_library_int.c'),
+        os.path.join(cls_dir, 'kernel_library_utils.c'),
+    ]
+    CPPPATH = [cls_dir]
+    objs = DefineGroup('Models', src, depend = [], CPPPATH = CPPPATH, CPPDEFINES = ['APP_USE_CLASSIFIER'])
+else:
+    # Gesture detector (YOLO) using NPU (Ethos-U55) + small CPU glue subgraphs
+    src = [
+        os.path.join(cwd, 'model.c'),
+        os.path.join(cwd, 'compute_sub_0000.c'),
+        os.path.join(cwd, 'compute_sub_0002.c'),
+        os.path.join(cwd, 'sub_0001_command_stream.c'),
+        os.path.join(cwd, 'sub_0001_invoke.c'),
+        os.path.join(cwd, 'sub_0001_model_data.c'),
+        os.path.join(cwd, 'sub_0001_tensors.c'),
+        os.path.join(cwd, 'kernel_library_int.c'),
+        os.path.join(cwd, 'kernel_library_utils.c'),
+    ]
+    objs = DefineGroup('Models', src, depend = [], CPPPATH = CPPPATH)
+
+Return('objs')

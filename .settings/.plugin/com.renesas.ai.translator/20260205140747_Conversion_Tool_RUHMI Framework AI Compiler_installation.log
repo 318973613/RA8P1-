@@ -1,0 +1,195 @@
+Looking in indexes: https://mirrors.aliyun.com/pypi/simple/
+Collecting mera==2.5.0+pkg.3577
+  Downloading https://github.com/renesas/ruhmi-framework-mcu/raw/refs/tags/Release-2026-02-02/install/mera-2.5.0+pkg.3577-cp310-cp310-win_amd64.whl (23.4 MB)
+     -------------------------------------- 23.4/23.4 MB 826.6 kB/s eta 0:00:00
+Collecting onnx==1.17.0
+  Downloading https://mirrors.aliyun.com/pypi/packages/0e/d3/d26ebf590a65686dde6b27fef32493026c5be9e42083340d947395f93405/onnx-1.17.0-cp310-cp310-win_amd64.whl (14.5 MB)
+     ---------------------------------------- 14.5/14.5 MB 9.1 MB/s eta 0:00:00
+Collecting tflite==2.18.0
+  Downloading https://mirrors.aliyun.com/pypi/packages/db/9b/f35d52989cb458a911f1ed4164b37dcf6559237b73c962c09ed0b6cecd4f/tflite-2.18.0-py2.py3-none-any.whl (153 kB)
+     -------------------------------------- 153.2/153.2 kB 1.8 MB/s eta 0:00:00
+Collecting numpy>=1.20
+  Downloading https://mirrors.aliyun.com/pypi/packages/a3/dd/4b822569d6b96c39d1215dbae0582fd99954dcbcf0c1a13c61783feaca3f/numpy-2.2.6-cp310-cp310-win_amd64.whl (12.9 MB)
+     ---------------------------------------- 12.9/12.9 MB 8.4 MB/s eta 0:00:00
+Collecting protobuf>=3.20.2
+  Downloading https://mirrors.aliyun.com/pypi/packages/55/75/bb9bc917d10e9ee13dee8607eb9ab963b7cf8be607c46e7862c748aa2af7/protobuf-6.33.5-cp310-abi3-win_amd64.whl (437 kB)
+     -------------------------------------- 437.1/437.1 kB 9.1 MB/s eta 0:00:00
+Collecting flatbuffers
+  Downloading https://mirrors.aliyun.com/pypi/packages/e8/2d/d2a548598be01649e2d46231d151a6c56d10b964d94043a335ae56ea2d92/flatbuffers-25.12.19-py2.py3-none-any.whl (26 kB)
+Collecting ethos-u-vela==4.2.0
+  Downloading https://mirrors.aliyun.com/pypi/packages/d3/4f/7a737b873e746db96e5c307b9ba9ff506bc46db5f6cfafd23c58cdb30a2d/ethos_u_vela-4.2.0-cp310-cp310-win_amd64.whl (1.5 MB)
+     ---------------------------------------- 1.5/1.5 MB 2.3 MB/s eta 0:00:00
+Collecting seaborn
+  Downloading https://mirrors.aliyun.com/pypi/packages/83/11/00d3c3dfc25ad54e731d91449895a79e4bf2384dc3ac01809010ba88f6d5/seaborn-0.13.2-py3-none-any.whl (294 kB)
+     -------------------------------------- 294.9/294.9 kB 9.2 MB/s eta 0:00:00
+Collecting tabulate
+  Downloading https://mirrors.aliyun.com/pypi/packages/40/44/4a5f08c96eb108af5cb50b41f76142f0afa346dfa99d5296fe7202a11854/tabulate-0.9.0-py3-none-any.whl (35 kB)
+Collecting tensorflow==2.18.0
+  Downloading https://mirrors.aliyun.com/pypi/packages/59/63/5ca1b06cf17dda9c52927917a7911612953a7d91865b1288c7f9eac2b53b/tensorflow-2.18.0-cp310-cp310-win_amd64.whl (7.5 kB)
+Collecting pytest
+  Downloading https://mirrors.aliyun.com/pypi/packages/3b/ab/b3226f0bd7cdcf710fbede2b3548584366da3b19b5021e74f5bde2a8fa3f/pytest-9.0.2-py3-none-any.whl (374 kB)
+     -------------------------------------- 374.8/374.8 kB 7.8 MB/s eta 0:00:00
+Collecting matplotlib
+  Downloading https://mirrors.aliyun.com/pypi/packages/e2/e2/fd0bbadf837f81edb0d208ba8f8cb552874c3b16e27cb91a31977d90875d/matplotlib-3.10.8-cp310-cp310-win_amd64.whl (8.1 MB)
+     ---------------------------------------- 8.1/8.1 MB 10.2 MB/s eta 0:00:00
+Collecting tqdm
+  Downloading https://mirrors.aliyun.com/pypi/packages/16/e1/3079a9ff9b8e11b846c6ac5c8b5bfb7ff225eee721825310c91b3b50304f/tqdm-4.67.3-py3-none-any.whl (78 kB)
+     ---------------------------------------- 78.4/78.4 kB 4.5 MB/s eta 0:00:00
+Collecting portalocker
+  Downloading https://mirrors.aliyun.com/pypi/packages/4b/a6/38c8e2f318bf67d338f4d629e93b0b4b9af331f455f0390ea8ce4a099b26/portalocker-3.2.0-py3-none-any.whl (22 kB)
+Collecting PyYAML
+  Downloading https://mirrors.aliyun.com/pypi/packages/2a/fa/926c003379b19fca39dd4634818b00dec6c62d87faf628d1394e137354d4/pyyaml-6.0.3-cp310-cp310-win_amd64.whl (158 kB)
+     -------------------------------------- 158.6/158.6 kB 9.9 MB/s eta 0:00:00
+Collecting numpy>=1.20
+  Downloading https://mirrors.aliyun.com/pypi/packages/19/77/538f202862b9183f54108557bfda67e17603fc560c384559e769321c9d92/numpy-1.26.4-cp310-cp310-win_amd64.whl (15.8 MB)
+     ---------------------------------------- 15.8/15.8 MB 2.7 MB/s eta 0:00:00
+Collecting flatbuffers
+  Downloading https://mirrors.aliyun.com/pypi/packages/41/f0/7e988a019bc54b2dbd0ad4182ef2d53488bb02e58694cd79d61369e85900/flatbuffers-24.3.25-py2.py3-none-any.whl (26 kB)
+Collecting lxml>=4.5.2
+  Downloading https://mirrors.aliyun.com/pypi/packages/d1/70/bd42491f0634aad41bdfc1e46f5cff98825fb6185688dc82baa35d509f1a/lxml-6.0.2-cp310-cp310-win_amd64.whl (4.0 MB)
+     ---------------------------------------- 4.0/4.0 MB 9.9 MB/s eta 0:00:00
+Collecting tensorflow-intel==2.18.0
+  Downloading https://mirrors.aliyun.com/pypi/packages/b2/47/e1a7cc95eccaaa52f47c3de8fd81abcfce105979790892f52e745339f929/tensorflow_intel-2.18.0-cp310-cp310-win_amd64.whl (390.0 MB)
+     -------------------------------------- 390.0/390.0 MB 1.0 MB/s eta 0:00:00
+Collecting packaging
+  Downloading https://mirrors.aliyun.com/pypi/packages/b7/b9/c538f279a4e237a006a2c98387d081e9eb060d203d8ed34467cc0f0b9b53/packaging-26.0-py3-none-any.whl (74 kB)
+     ---------------------------------------- 74.4/74.4 kB 1.4 MB/s eta 0:00:00
+Collecting termcolor>=1.1.0
+  Downloading https://mirrors.aliyun.com/pypi/packages/33/d1/8bb87d21e9aeb323cc03034f5eaf2c8f69841e40e4853c2627edf8111ed3/termcolor-3.3.0-py3-none-any.whl (7.7 kB)
+Collecting wrapt>=1.11.0
+  Downloading https://mirrors.aliyun.com/pypi/packages/d1/4e/661c7c76ecd85375b2bc03488941a3a1078642af481db24949e2b9de01f4/wrapt-2.1.1-cp310-cp310-win_amd64.whl (60 kB)
+     ---------------------------------------- 60.2/60.2 kB 1.6 MB/s eta 0:00:00
+Collecting ml-dtypes<0.5.0,>=0.4.0
+  Downloading https://mirrors.aliyun.com/pypi/packages/04/1b/9a3afb437702503514f3934ec8d7904270edf013d28074f3e700e5dfbb0f/ml_dtypes-0.4.1-cp310-cp310-win_amd64.whl (126 kB)
+     ------------------------------------ 126.6/126.6 kB 931.1 kB/s eta 0:00:00
+Collecting six>=1.12.0
+  Downloading https://mirrors.aliyun.com/pypi/packages/b7/ce/149a00dd41f10bc29e5921b496af8b574d8413afcd5e30dfa0ed46c2cc5e/six-1.17.0-py2.py3-none-any.whl (11 kB)
+Collecting typing-extensions>=3.6.6
+  Downloading https://mirrors.aliyun.com/pypi/packages/18/67/36e9267722cc04a6b9f15c7f3441c2363321a3ea07da7ae0c0707beb2a9c/typing_extensions-4.15.0-py3-none-any.whl (44 kB)
+     ---------------------------------------- 44.6/44.6 kB 2.1 MB/s eta 0:00:00
+Collecting opt-einsum>=2.3.2
+  Downloading https://mirrors.aliyun.com/pypi/packages/23/cd/066e86230ae37ed0be70aae89aabf03ca8d9f39c8aea0dec8029455b5540/opt_einsum-3.4.0-py3-none-any.whl (71 kB)
+     ---------------------------------------- 71.9/71.9 kB 2.0 MB/s eta 0:00:00
+Collecting astunparse>=1.6.0
+  Downloading https://mirrors.aliyun.com/pypi/packages/2b/03/13dde6512ad7b4557eb792fbcf0c653af6076b81e5941d36ec61f7ce6028/astunparse-1.6.3-py2.py3-none-any.whl (12 kB)
+Collecting tensorboard<2.19,>=2.18
+  Downloading https://mirrors.aliyun.com/pypi/packages/b1/de/021c1d407befb505791764ad2cbd56ceaaa53a746baed01d2e2143f05f18/tensorboard-2.18.0-py3-none-any.whl (5.5 MB)
+     ---------------------------------------- 5.5/5.5 MB 6.0 MB/s eta 0:00:00
+Collecting grpcio<2.0,>=1.24.3
+  Downloading https://mirrors.aliyun.com/pypi/packages/10/30/d3d2adcbb6dd3ff59d6ac3df6ef830e02b437fb5c90990429fd180e52f30/grpcio-1.76.0-cp310-cp310-win_amd64.whl (4.7 MB)
+     ---------------------------------------- 4.7/4.7 MB 6.0 MB/s eta 0:00:00
+Collecting h5py>=3.11.0
+  Downloading https://mirrors.aliyun.com/pypi/packages/c3/28/dc08de359c2f43a67baa529cb70d7f9599848750031975eed92d6ae78e1d/h5py-3.15.1-cp310-cp310-win_amd64.whl (2.9 MB)
+     ---------------------------------------- 2.9/2.9 MB 8.3 MB/s eta 0:00:00
+Requirement already satisfied: setuptools in d:\ruhmi\.venv\lib\site-packages (from tensorflow-intel==2.18.0->tensorflow==2.18.0->mera==2.5.0+pkg.3577->-r https://Tool-support.renesas.com/tool-support/Zoo/MCT/requirements.txt (line 1)) (65.5.0)
+Collecting absl-py>=1.0.0
+  Downloading https://mirrors.aliyun.com/pypi/packages/18/a6/907a406bb7d359e6a63f99c313846d9eec4f7e6f7437809e03aa00fa3074/absl_py-2.4.0-py3-none-any.whl (135 kB)
+     -------------------------------------- 135.8/135.8 kB 4.0 MB/s eta 0:00:00
+Collecting libclang>=13.0.0
+  Downloading https://mirrors.aliyun.com/pypi/packages/0b/2d/3f480b1e1d31eb3d6de5e3ef641954e5c67430d5ac93b7fa7e07589576c7/libclang-18.1.1-py2.py3-none-win_amd64.whl (26.4 MB)
+     ---------------------------------------- 26.4/26.4 MB 9.8 MB/s eta 0:00:00
+Collecting keras>=3.5.0
+  Downloading https://mirrors.aliyun.com/pypi/packages/13/7a/40096b1e1c29ffa830497a80800775ada5ba93f15cd52e0f1a84b4f22cd4/keras-3.12.1-py3-none-any.whl (1.5 MB)
+     ---------------------------------------- 1.5/1.5 MB 8.5 MB/s eta 0:00:00
+Collecting protobuf>=3.20.2
+  Downloading https://mirrors.aliyun.com/pypi/packages/1c/66/2dc736a4d576847134fb6d80bd995c569b13cdc7b815d669050bf0ce2d2c/protobuf-5.29.6-cp310-abi3-win_amd64.whl (435 kB)
+     -------------------------------------- 435.2/435.2 kB 3.4 MB/s eta 0:00:00
+Collecting requests<3,>=2.21.0
+  Downloading https://mirrors.aliyun.com/pypi/packages/1e/db/4254e3eabe8020b458f1a747140d32277ec7a271daf1d235b70dc0b4e6e3/requests-2.32.5-py3-none-any.whl (64 kB)
+     ---------------------------------------- 64.7/64.7 kB ? eta 0:00:00
+Collecting tensorflow-io-gcs-filesystem>=0.23.1
+  Downloading https://mirrors.aliyun.com/pypi/packages/78/51/437068ed6b44162d54addb8ac0ddfe9e406d07ac6f9c8a6cf96869ec2262/tensorflow_io_gcs_filesystem-0.31.0-cp310-cp310-win_amd64.whl (1.5 MB)
+     ---------------------------------------- 1.5/1.5 MB 11.8 MB/s eta 0:00:00
+Collecting gast!=0.5.0,!=0.5.1,!=0.5.2,>=0.2.1
+  Downloading https://mirrors.aliyun.com/pypi/packages/1d/33/f1c6a276de27b7d7339a34749cc33fa87f077f921969c47185d34a887ae2/gast-0.7.0-py3-none-any.whl (22 kB)
+Collecting google-pasta>=0.1.1
+  Downloading https://mirrors.aliyun.com/pypi/packages/a3/de/c648ef6835192e6e2cc03f40b19eeda4382c49b5bafb43d88b931c4c74ac/google_pasta-0.2.0-py3-none-any.whl (57 kB)
+     ---------------------------------------- 57.5/57.5 kB 3.0 MB/s eta 0:00:00
+Collecting cycler>=0.10
+  Downloading https://mirrors.aliyun.com/pypi/packages/e7/05/c19819d5e3d95294a6f5947fb9b9629efb316b96de511b418c53d245aae6/cycler-0.12.1-py3-none-any.whl (8.3 kB)
+Collecting fonttools>=4.22.0
+  Downloading https://mirrors.aliyun.com/pypi/packages/63/fa/bfdc98abb4dd2bd491033e85e3ba69a2313c850e759a6daa014bc9433b0f/fonttools-4.61.1-cp310-cp310-win_amd64.whl (1.6 MB)
+     ---------------------------------------- 1.6/1.6 MB 11.0 MB/s eta 0:00:00
+Collecting pyparsing>=3
+  Downloading https://mirrors.aliyun.com/pypi/packages/10/bd/c038d7cc38edc1aa5bf91ab8068b63d4308c66c4c8bb3cbba7dfbc049f9c/pyparsing-3.3.2-py3-none-any.whl (122 kB)
+     -------------------------------------- 122.8/122.8 kB 3.5 MB/s eta 0:00:00
+Collecting kiwisolver>=1.3.1
+  Downloading https://mirrors.aliyun.com/pypi/packages/a2/55/c2898d84ca440852e560ca9f2a0d28e6e931ac0849b896d77231929900e7/kiwisolver-1.4.9-cp310-cp310-win_amd64.whl (73 kB)
+     ---------------------------------------- 73.7/73.7 kB 2.0 MB/s eta 0:00:00
+Collecting pillow>=8
+  Downloading https://mirrors.aliyun.com/pypi/packages/d4/24/7d1c0e160b6b5ac2605ef7d8be537e28753c0db5363d035948073f5513d7/pillow-12.1.0-cp310-cp310-win_amd64.whl (7.0 MB)
+     ---------------------------------------- 7.0/7.0 MB 11.0 MB/s eta 0:00:00
+Collecting contourpy>=1.0.1
+  Downloading https://mirrors.aliyun.com/pypi/packages/54/ec/5162b8582f2c994721018d0c9ece9dc6ff769d298a8ac6b6a652c307e7df/contourpy-1.3.2-cp310-cp310-win_amd64.whl (221 kB)
+     -------------------------------------- 221.2/221.2 kB 6.6 MB/s eta 0:00:00
+Collecting python-dateutil>=2.7
+  Downloading https://mirrors.aliyun.com/pypi/packages/ec/57/56b9bcc3c9c6a792fcbaf139543cee77261f3651ca9da0c93f5c1221264b/python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+     -------------------------------------- 229.9/229.9 kB 7.1 MB/s eta 0:00:00
+Collecting pywin32>=226
+  Downloading https://mirrors.aliyun.com/pypi/packages/5e/bf/360243b1e953bd254a82f12653974be395ba880e7ec23e3731d9f73921cc/pywin32-311-cp310-cp310-win_amd64.whl (9.6 MB)
+     ---------------------------------------- 9.6/9.6 MB 11.1 MB/s eta 0:00:00
+Collecting iniconfig>=1.0.1
+  Downloading https://mirrors.aliyun.com/pypi/packages/cb/b1/3846dd7f199d53cb17f49cba7e651e9ce294d8497c8c150530ed11865bb8/iniconfig-2.3.0-py3-none-any.whl (7.5 kB)
+Collecting pluggy<2,>=1.5
+  Downloading https://mirrors.aliyun.com/pypi/packages/54/20/4d324d65cc6d9205fabedc306948156824eb9f0ee1633355a8f7ec5c66bf/pluggy-1.6.0-py3-none-any.whl (20 kB)
+Collecting tomli>=1
+  Downloading https://mirrors.aliyun.com/pypi/packages/23/d1/136eb2cb77520a31e1f64cbae9d33ec6df0d78bdf4160398e86eec8a8754/tomli-2.4.0-py3-none-any.whl (14 kB)
+Collecting pygments>=2.7.2
+  Downloading https://mirrors.aliyun.com/pypi/packages/c7/21/705964c7812476f378728bdf590ca4b771ec72385c533964653c68e86bdc/pygments-2.19.2-py3-none-any.whl (1.2 MB)
+     ---------------------------------------- 1.2/1.2 MB 11.1 MB/s eta 0:00:00
+Collecting colorama>=0.4
+  Downloading https://mirrors.aliyun.com/pypi/packages/d1/d6/3965ed04c63042e047cb6a3e6ed1a63a35087b6a609aa3a15ed8ac56c221/colorama-0.4.6-py2.py3-none-any.whl (25 kB)
+Collecting exceptiongroup>=1
+  Downloading https://mirrors.aliyun.com/pypi/packages/8a/0e/97c33bf5009bdbac74fd2beace167cab3f978feb69cc36f1ef79360d6c4e/exceptiongroup-1.3.1-py3-none-any.whl (16 kB)
+Collecting pandas>=1.2
+  Downloading https://mirrors.aliyun.com/pypi/packages/85/72/530900610650f54a35a19476eca5104f38555afccda1aa11a92ee14cb21d/pandas-2.3.3-cp310-cp310-win_amd64.whl (11.3 MB)
+     ---------------------------------------- 11.3/11.3 MB 9.8 MB/s eta 0:00:00
+Collecting pytz>=2020.1
+  Downloading https://mirrors.aliyun.com/pypi/packages/81/c4/34e93fe5f5429d7570ec1fa436f1986fb1f00c3e0f43a589fe2bbcd22c3f/pytz-2025.2-py2.py3-none-any.whl (509 kB)
+     -------------------------------------- 509.2/509.2 kB 7.9 MB/s eta 0:00:00
+Collecting tzdata>=2022.7
+  Downloading https://mirrors.aliyun.com/pypi/packages/c7/b0/003792df09decd6849a5e39c28b513c06e84436a54440380862b5aeff25d/tzdata-2025.3-py2.py3-none-any.whl (348 kB)
+     ------------------------------------- 348.5/348.5 kB 10.9 MB/s eta 0:00:00
+Collecting wheel<1.0,>=0.23.0
+  Downloading https://mirrors.aliyun.com/pypi/packages/87/22/b76d483683216dde3d67cba61fb2444be8d5be289bf628c13fc0fd90e5f9/wheel-0.46.3-py3-none-any.whl (30 kB)
+Collecting rich
+  Downloading https://mirrors.aliyun.com/pypi/packages/ef/45/615f5babd880b4bd7d405cc0dc348234c5ffb6ed1ea33e152ede08b2072d/rich-14.3.2-py3-none-any.whl (309 kB)
+     -------------------------------------- 310.0/310.0 kB 6.4 MB/s eta 0:00:00
+Collecting optree
+  Downloading https://mirrors.aliyun.com/pypi/packages/ee/53/cf4e66ac4f134c2211a6f3f04e9d3a98effb6229316bcdadc3d3a9247362/optree-0.18.0-cp310-cp310-win_amd64.whl (302 kB)
+     -------------------------------------- 302.7/302.7 kB 4.6 MB/s eta 0:00:00
+Collecting namex
+  Downloading https://mirrors.aliyun.com/pypi/packages/b2/bc/465daf1de06409cdd4532082806770ee0d8d7df434da79c76564d0f69741/namex-0.1.0-py3-none-any.whl (5.9 kB)
+Collecting charset_normalizer<4,>=2
+  Downloading https://mirrors.aliyun.com/pypi/packages/eb/66/e396e8a408843337d7315bab30dbf106c38966f1819f123257f5520f8a96/charset_normalizer-3.4.4-cp310-cp310-win_amd64.whl (107 kB)
+     -------------------------------------- 107.2/107.2 kB 6.1 MB/s eta 0:00:00
+Collecting certifi>=2017.4.17
+  Downloading https://mirrors.aliyun.com/pypi/packages/e6/ad/3cc14f097111b4de0040c83a525973216457bbeeb63739ef1ed275c1c021/certifi-2026.1.4-py3-none-any.whl (152 kB)
+     -------------------------------------- 152.9/152.9 kB 8.9 MB/s eta 0:00:00
+Collecting idna<4,>=2.5
+  Downloading https://mirrors.aliyun.com/pypi/packages/0e/61/66938bbb5fc52dbdf84594873d5b51fb1f7c7794e9c0f5bd885f30bc507b/idna-3.11-py3-none-any.whl (71 kB)
+     ---------------------------------------- 71.0/71.0 kB 3.8 MB/s eta 0:00:00
+Collecting urllib3<3,>=1.21.1
+  Downloading https://mirrors.aliyun.com/pypi/packages/39/08/aaaad47bc4e9dc8c725e68f9d04865dbcb2052843ff09c97b08904852d84/urllib3-2.6.3-py3-none-any.whl (131 kB)
+     -------------------------------------- 131.6/131.6 kB 3.9 MB/s eta 0:00:00
+Collecting markdown>=2.6.8
+  Downloading https://mirrors.aliyun.com/pypi/packages/59/1b/6ef961f543593969d25b2afe57a3564200280528caa9bd1082eecdd7b3bc/markdown-3.10.1-py3-none-any.whl (107 kB)
+     -------------------------------------- 107.7/107.7 kB 6.5 MB/s eta 0:00:00
+Collecting werkzeug>=1.0.1
+  Downloading https://mirrors.aliyun.com/pypi/packages/ad/e4/8d97cca767bcc1be76d16fb76951608305561c6e056811587f36cb1316a8/werkzeug-3.1.5-py3-none-any.whl (225 kB)
+     -------------------------------------- 225.0/225.0 kB 6.9 MB/s eta 0:00:00
+Collecting tensorboard-data-server<0.8.0,>=0.7.0
+  Downloading https://mirrors.aliyun.com/pypi/packages/7a/13/e503968fefabd4c6b2650af21e110aa8466fe21432cd7c43a84577a89438/tensorboard_data_server-0.7.2-py3-none-any.whl (2.4 kB)
+Collecting markupsafe>=2.1.1
+  Downloading https://mirrors.aliyun.com/pypi/packages/d6/25/55dc3ab959917602c96985cb1253efaa4ff42f71194bddeb61eb7278b8be/markupsafe-3.0.3-cp310-cp310-win_amd64.whl (15 kB)
+Collecting markdown-it-py>=2.2.0
+  Downloading https://mirrors.aliyun.com/pypi/packages/94/54/e7d793b573f298e1c9013b8c4dade17d481164aa517d1d7148619c2cedbf/markdown_it_py-4.0.0-py3-none-any.whl (87 kB)
+     ---------------------------------------- 87.3/87.3 kB 2.5 MB/s eta 0:00:00
+Collecting mdurl~=0.1
+  Downloading https://mirrors.aliyun.com/pypi/packages/b3/38/89ba8ad64ae25be8de66a6d463314cf1eb366222074cfda9ee839c56a4b4/mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+Installing collected packages: pywin32, pytz, namex, libclang, flatbuffers, wrapt, urllib3, tzdata, typing-extensions, tomli, termcolor, tensorflow-io-gcs-filesystem, tensorboard-data-server, tabulate, six, PyYAML, pyparsing, pygments, protobuf, portalocker, pluggy, pillow, packaging, opt-einsum, numpy, mdurl, markupsafe, markdown, lxml, kiwisolver, iniconfig, idna, gast, fonttools, cycler, colorama, charset_normalizer, certifi, absl-py, wheel, werkzeug, tqdm, tflite, requests, python-dateutil, optree, onnx, ml-dtypes, markdown-it-py, h5py, grpcio, google-pasta, exceptiongroup, ethos-u-vela, contourpy, tensorboard, rich, pytest, pandas, matplotlib, astunparse, seaborn, keras, tensorflow-intel, tensorflow, mera
+Successfully installed PyYAML-6.0.3 absl-py-2.4.0 astunparse-1.6.3 certifi-2026.1.4 charset_normalizer-3.4.4 colorama-0.4.6 contourpy-1.3.2 cycler-0.12.1 ethos-u-vela-4.2.0 exceptiongroup-1.3.1 flatbuffers-24.3.25 fonttools-4.61.1 gast-0.7.0 google-pasta-0.2.0 grpcio-1.76.0 h5py-3.15.1 idna-3.11 iniconfig-2.3.0 keras-3.12.1 kiwisolver-1.4.9 libclang-18.1.1 lxml-6.0.2 markdown-3.10.1 markdown-it-py-4.0.0 markupsafe-3.0.3 matplotlib-3.10.8 mdurl-0.1.2 mera-2.5.0+pkg.3577 ml-dtypes-0.4.1 namex-0.1.0 numpy-1.26.4 onnx-1.17.0 opt-einsum-3.4.0 optree-0.18.0 packaging-26.0 pandas-2.3.3 pillow-12.1.0 pluggy-1.6.0 portalocker-3.2.0 protobuf-5.29.6 pygments-2.19.2 pyparsing-3.3.2 pytest-9.0.2 python-dateutil-2.9.0.post0 pytz-2025.2 pywin32-311 requests-2.32.5 rich-14.3.2 seaborn-0.13.2 six-1.17.0 tabulate-0.9.0 tensorboard-2.18.0 tensorboard-data-server-0.7.2 tensorflow-2.18.0 tensorflow-intel-2.18.0 tensorflow-io-gcs-filesystem-0.31.0 termcolor-3.3.0 tflite-2.18.0 tomli-2.4.0 tqdm-4.67.3 typing-extensions-4.15.0 tzdata-2025.3 urllib3-2.6.3 werkzeug-3.1.5 wheel-0.46.3 wrapt-2.1.1
+
+[notice] A new release of pip is available: 23.0.1 -> 26.0.1
+[notice] To update, run: D:\RUHMI\.venv\Scripts\python.exe -m pip install --upgrade pip
+Exit code: 0

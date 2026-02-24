@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<DrpAiTranslatorProjectSettings>
+    <ProjectSettingsInfo>
+        <name>wfi_board4</name>
+        <framework>1</framework>
+        <modelfile>MobileFaceNet.onnx</modelfile>
+        <output_directory>D:\gesture_ai\face_npu</output_directory>
+        <docker_image_name>Unused property</docker_image_name>
+        <PytorchSettingInfo>
+            <configuration_type>false</configuration_type>
+            <configuration_file/>
+            <modelname/>
+            <model_weight/>
+            <input_layer_shape/>
+        </PytorchSettingInfo>
+    </ProjectSettingsInfo>
+    <DRP-AI_TVMSettingInfo>
+        <TransSettingInfo>
+            <item key="D:\RT-ThreadStudio\workspace\modul\mobilenet_v2_1.0_224_INT8.tflite">D:/RT-ThreadStudio/workspace/modul/result/conversion_tool_settings/mobilenet_v2_1.0_224_INT8.tflite_trans_config.json</item>
+            <item key="D:/RT-ThreadStudio/workspace/wfi_board3/ok_palm_192_heads.onnx">D:/gesture_ai/convert_cpu/converted/conversion_tool_settings/ok_palm_192_heads.onnx_trans_config.json</item>
+            <item key="ok_palm_192_heads.onnx">D:/gesture_ai/convert_npu/conversion_tool_settings/ok_palm_192_heads.onnx_trans_config.json</item>
+            <item key="MobileFaceNet.onnx">D:/gesture_ai/face_npu/conversion_tool_settings/MobileFaceNet.onnx_trans_config.json</item>
+            <item key="D:\gesture_ai\ok_palm_192_heads.onnx">D:/gesture_ai/convert/conversion_tool_settings/ok_palm_192_heads.onnx_trans_config.json</item>
+            <item key="D:/RT-ThreadStudio/workspace/wfi_board3/hand_detector.tflite">D:/RT-ThreadStudio/workspace/modul/result/conversion_tool_settings/hand_detector.tflite_trans_config.json</item>
+        </TransSettingInfo>
+        <QuantizationSetting>
+            <item key="D:\RT-ThreadStudio\workspace\modul\mobilenet_v2_1.0_224_INT8.tflite">D:/RT-ThreadStudio/workspace/modul/result/conversion_tool_settings/mobilenet_v2_1.0_224_INT8.tflite_quant_config.json</item>
+            <item key="D:/RT-ThreadStudio/workspace/wfi_board3/ok_palm_192_heads.onnx">D:/gesture_ai/convert_cpu/converted/conversion_tool_settings/ok_palm_192_heads.onnx_quant_config.json</item>
+            <item key="ok_palm_192_heads.onnx">D:/gesture_ai/convert_npu/conversion_tool_settings/ok_palm_192_heads.onnx_quant_config.json</item>
+            <item key="MobileFaceNet.onnx">D:/gesture_ai/face_npu/conversion_tool_settings/MobileFaceNet.onnx_quant_config.json</item>
+            <item key="D:\gesture_ai\ok_palm_192_heads.onnx">D:/gesture_ai/convert/conversion_tool_settings/ok_palm_192_heads.onnx_quant_config.json</item>
+            <item key="D:/RT-ThreadStudio/workspace/wfi_board3/hand_detector.tflite">D:/RT-ThreadStudio/workspace/modul/result/conversion_tool_settings/hand_detector.tflite_quant_config.json</item>
+        </QuantizationSetting>
+    </DRP-AI_TVMSettingInfo>
+</DrpAiTranslatorProjectSettings>

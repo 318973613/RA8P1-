@@ -1,0 +1,10 @@
+import os
+from building import *
+
+src = Glob('*.c')
+cwd = GetCurrentDir()
+CPPPATH = [cwd]
+
+group = DefineGroup('YoloFace', src, depend = [], CPPPATH = CPPPATH)
+
+Return('group')

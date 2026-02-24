@@ -1,0 +1,22 @@
+import os
+from building import *
+
+cwd = GetCurrentDir()
+CPPPATH = [cwd]
+
+# Only compile gesture-generated sources here.
+# kernel_library_* symbols are shared from models_classifier
+# to avoid duplicate definitions.
+src = [
+    os.path.join(cwd, 'model.c'),
+    os.path.join(cwd, 'gesture_compute_sub_0000.c'),
+    os.path.join(cwd, 'gesture_compute_sub_0002.c'),
+    os.path.join(cwd, 'gesture_sub_0001_command_stream.c'),
+    os.path.join(cwd, 'gesture_sub_0001_invoke.c'),
+    os.path.join(cwd, 'gesture_sub_0001_model_data.c'),
+    os.path.join(cwd, 'gesture_sub_0001_tensors.c'),
+]
+
+objs = DefineGroup('ModelsGesture', src, depend = [], CPPPATH = CPPPATH)
+
+Return('objs')

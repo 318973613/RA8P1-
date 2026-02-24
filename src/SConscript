@@ -1,0 +1,32 @@
+import os
+from building import *
+
+objs = []
+src = Glob('*.c')
+cwd  = GetCurrentDir()
+CPPPATH = [cwd, os.path.join(cwd, '../board/ports/ceu_camera'), os.path.join(cwd, '../board/ports/ceu_camera/sensors')]
+
+def use_face_pipeline_from_header():
+    header = os.path.abspath(os.path.join(cwd, '..', 'model_select.h'))
+    try:
+        with open(header, 'r', encoding='utf-8') as f:
+            for line in f:
+                if 'APP_USE_FACE_PIPELINE' in line and '1' in line:
+                    return True
+    except Exception:
+        pass
+    return False
+
+use_face = use_face_pipeline_from_header()
+
+subdirs = []
+if use_face:
+    subdirs = ['models_face', 'models_classifier', 'models_gesture', 'yolo_face']
+else:
+    subdirs = ['models', 'yolo']
+
+for d in subdirs:
+    if os.path.isfile(os.path.join(cwd, d, 'SConscript')):
+        objs = objs + SConscript(os.path.join(d, 'SConscript'))
+
+Return('objs')

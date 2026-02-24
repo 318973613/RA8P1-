@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/* ======================================================
+ * 主要功能：WiFi + 摄像头 + NPU 人脸/手势识别门禁系统
+ * 平台：RT-Thread + RA8 MCU + Ethos-U55 NPU
+ * ====================================================== */
+
+/* ---- RT-Thread 及 BSP 头文件 ---- */
 #include <rtthread.h>
 #include <board.h>
 #include "hal_data.h"
@@ -14,10 +20,14 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+
+/* ---- 文件系统 / WiFi 驱动 ---- */
 #include <fal.h>
 #include <dfs_fs.h>
 #include <wlan_mgnt.h>
 
+
+/* ---- 摄像头 / LCD / 模型选择 ---- */
 #include "sensor.h"
 #include "st7789_port.h"
 #include "model_select.h"
@@ -45,18 +55,23 @@
 #define LOG_TAG             "main"
 #include <drv_log.h>
 
-#define WIFI_SSID           "Xiaomi_C70E"
-#define WIFI_PASSWORD       "13618027302"
+/* ---- WiFi 连接配置 ---- */
+#define WIFI_SSID           "Xiaomi_C70E"           /* 路由器 SSID */
+#define WIFI_PASSWORD       "13618027302"           /* 路由器密码 */
 
-#define LED_PIN_0           BSP_IO_PORT_00_PIN_12
-#define DOOR_LED_PIN        BSP_IO_PORT_06_PIN_13   /* User requested: P613 green LED */
-#define ALARM_BUZZER_PIN    BSP_IO_PORT_10_PIN_07   /* User requested: PA07 buzzer */
-#define FS_PARTITION_NAME   "filesystem"
 
+/* ---- IO 引脚定义 ---- */
+#define LED_PIN_0           BSP_IO_PORT_00_PIN_12   /* 心跳指示 LED */
+#define DOOR_LED_PIN        BSP_IO_PORT_06_PIN_13   /* 门锁绿色 LED（P613）*/
+#define ALARM_BUZZER_PIN    BSP_IO_PORT_10_PIN_07   /* 报警蜂鸣器（PA07）*/
+#define FS_PARTITION_NAME   "filesystem"            /* FAL 文件系统分区名 */
+
+
+/* ---- 摄像头分辨率（QVGA）---- */
 #define CAM_WIDTH   320
 #define CAM_HEIGHT  240
-#define DEBUG_BYPASS_CAMERA 0
-#define DEBUG_BYPASS_NPU    0
+#define DEBUG_BYPASS_CAMERA 0  /* 调试开关：1=跳过摄像头，直接用固定数据 */
+#define DEBUG_BYPASS_NPU    0  /* 调试开关：1=跳过 NPU 推理 */
 
 #ifndef ST7789_LCD_WIDTH
 #define ST7789_LCD_WIDTH   240
@@ -68,36 +83,43 @@
 #define ST7789_STATUS_BAR_H 20
 #endif
 
-#define FACE_DB_MAX_USERS 3
-#define FACE_EMB_DIM 128
-#define FACE_MATCH_THR2_MILLI 880
-#define FACE_MATCH_STABLE_FRAMES 5U
-#define FACE_MATCH_GRACE_MS 1200U
-#define FACE_DET_MIN_SCORE_MILLI 850
-#define FACE_MULTI_MATCH_WINDOW_MS 10000U
-#define FACE_MULTI_MATCH_NEED 3U
-#define FACE_ENROLL_SAMPLES 4U
-#define FACE_SCORE_LOG_EVERY 30U
-#define FACE_ENROLL_KEY_DEBOUNCE_MS 250U
-#define FACE_ENROLL_KEY_LONGPRESS_MS 3000U
-#define FACE_DB_FILE_PATH "/face_db.bin"
-#define FACE_DB_MAGIC 0x46444231U
-#define FACE_DB_VERSION 1U
 
-#define GESTURE_OK_THR_MILLI 500
-#define GESTURE_OK_STABLE_FRAMES 1U
-#define GESTURE_RUN_INTERVAL_FRAMES 1U
-#define GESTURE_MAX_BOXES 16
-#define GESTURE_WINDOW_MS 30000U
-#define DOOR_UNLOCK_HOLD_MS 3000U
-#define ALARM_BUZZER_ON_MS 120U
-#define ALARM_BUZZER_OFF_MS 880U
+/* ---- 人脸数据库与识别参数 ---- */
+#define FACE_DB_MAX_USERS 3             /* 最多注册用户数 */
+#define FACE_EMB_DIM 128                /* MobileFaceNet 嵌入向量维度 */
+#define FACE_MATCH_THR2_MILLI 880       /* 余弦²相似度阈值（×1000），超过则视为匹配 */
+#define FACE_MATCH_STABLE_FRAMES 5U     /* 连续匹配帧数达到此值才认为稳定匹配 */
+#define FACE_MATCH_GRACE_MS 1200U       /* 匹配丢失后的宽限时间（ms），防止短暂遮挡 */
+#define FACE_DET_MIN_SCORE_MILLI 850    /* 人脸检测最低置信度（×1000）*/
+#define FACE_MULTI_MATCH_WINDOW_MS 10000U /* 多次匹配计数窗口（ms）*/
+#define FACE_MULTI_MATCH_NEED 3U        /* 窗口内需匹配次数，达到后开启手势窗口 */
+#define FACE_ENROLL_SAMPLES 4U          /* 注册时采集的帧数（用于平均特征）*/
+#define FACE_SCORE_LOG_EVERY 30U        /* 每隔多少帧打印一次得分日志（0=关闭）*/
+#define FACE_ENROLL_KEY_DEBOUNCE_MS 250U    /* 注册按键防抖时间（ms）*/
+#define FACE_ENROLL_KEY_LONGPRESS_MS 3000U  /* 长按识别时间（ms），长按清空数据库 */
+#define FACE_DB_FILE_PATH "/face_db.bin"    /* 人脸数据库文件路径 */
+#define FACE_DB_MAGIC 0x46444231U       /* 数据库文件魔数 "FDB1" */
+#define FACE_DB_VERSION 1U              /* 数据库文件版本号 */
+
+
+/* ---- 手势识别参数 ---- */
+#define GESTURE_OK_THR_MILLI 500        /* OK 手势置信度阈值（×1000）*/
+#define GESTURE_OK_STABLE_FRAMES 1U     /* OK 手势稳定帧数 */
+#define GESTURE_RUN_INTERVAL_FRAMES 1U  /* 每隔多少帧运行一次手势检测 */
+#define GESTURE_MAX_BOXES 16            /* 手势检测最大输出框数 */
+#define GESTURE_WINDOW_MS 30000U        /* 人脸确认后，手势窗口保持时间（ms）*/
+
+/* ---- 门锁与报警参数 ---- */
+#define DOOR_UNLOCK_HOLD_MS 3000U       /* 开门后 LED 保持亮起的时间（ms）*/
+#define ALARM_BUZZER_ON_MS 120U         /* 报警蜂鸣器响的时长（ms）*/
+#define ALARM_BUZZER_OFF_MS 880U        /* 报警蜂鸣器静默时长（ms）*/
 #define ALARM_BUZZER_PWM_DEV "pwm1"
 #define ALARM_BUZZER_PWM_CH 0
-#define ALARM_BUZZER_PWM_FREQ_HZ 3800U
-#define ALARM_BUZZER_PWM_DUTY_PERCENT 80U
-#define LCD_INIT_RETRY_COUNT     5U
-#define LCD_INIT_RETRY_DELAY_MS  120U
+#define ALARM_BUZZER_PWM_FREQ_HZ 3800U  /* 蜂鸣器频率（Hz）*/
+#define ALARM_BUZZER_PWM_DUTY_PERCENT 80U /* 蜂鸣器占空比（%）*/
+/* ---- LCD 初始化重试参数 ---- */
+#define LCD_INIT_RETRY_COUNT     5U     /* ST7789 最大初始化重试次数 */
+#define LCD_INIT_RETRY_DELAY_MS  120U   /* 每次重试前等待时间（ms）*/
 #define APP_LCD_ONLY_DEBUG       0
 #define APP_GESTURE_ONLY_BOOT    0
 
@@ -109,19 +131,21 @@
 #define FACE_ENROLL_KEY_ACTIVE PIN_LOW
 #endif
 
-static volatile bool led_status = false;
-static volatile rt_uint8_t g_face_embed_once_req = 0;
-static volatile rt_uint8_t g_face_embed_auto = 1;
-static volatile rt_uint8_t g_door_unlocked = 0;
-static volatile rt_tick_t g_door_unlock_until = 0;
+
+/* ---- 全局运行时状态变量 ---- */
+static volatile bool led_status = false;               /* 心跳 LED 当前状态 */
+static volatile rt_uint8_t g_face_embed_once_req = 0;  /* 单次特征提取请求标志 */
+static volatile rt_uint8_t g_face_embed_auto = 1;      /* 自动特征提取开关（1=开启）*/
+static volatile rt_uint8_t g_door_unlocked = 0;        /* 门锁已开（1=已开）*/
+static volatile rt_tick_t g_door_unlock_until = 0;     /* 门锁自动关闭的超时 tick */
 static rt_uint32_t g_buzzer_freq_hz = ALARM_BUZZER_PWM_FREQ_HZ;
 static rt_bool_t g_buzzer_init_tried = RT_FALSE;
 static rt_bool_t g_buzzer_hw_ready = RT_FALSE;
-static volatile int g_web_led_mode = -1; /* -1:auto, 0:off, 1:on */
-static volatile rt_uint8_t g_web_alarm_enable = 1;
-static volatile rt_uint8_t g_web_buzzer_enable = 0;
-static volatile int32_t g_runtime_last_palm_m = -1;
-static volatile rt_uint8_t g_runtime_alarm_active = 0;
+static volatile int g_web_led_mode = -1;               /* Web 控制 LED 模式：-1=自动, 0=关, 1=开 */
+static volatile rt_uint8_t g_web_alarm_enable = 1;     /* Web 控制报警使能 */
+static volatile rt_uint8_t g_web_buzzer_enable = 0;    /* Web 控制蜂鸣器使能 */
+static volatile int32_t g_runtime_last_palm_m = -1;    /* 最近一次手掌置信度（×1000）*/
+static volatile rt_uint8_t g_runtime_alarm_active = 0; /* 当前报警激活标志 */
 #if APP_USE_FACE_PIPELINE
 static volatile rt_uint8_t g_face_enroll_req = 0;
 static volatile int g_face_stable_match_id = -1;
@@ -143,11 +167,15 @@ static rt_uint8_t g_face_match_stable_frames = FACE_MATCH_STABLE_FRAMES;
 static int32_t g_face_det_min_score_milli = FACE_DET_MIN_SCORE_MILLI;
 #endif
 
+
+/* 控制门锁 LED，低电平点亮（共阳接法）*/
 static inline void door_led_write(rt_bool_t on)
 {
     rt_pin_write(DOOR_LED_PIN, on ? PIN_LOW : PIN_HIGH);
 }
 
+
+/* 尝试初始化蜂鸣器的 GPT（PWM）外设，只执行一次 */
 static void buzzer_pwm_try_init(void)
 {
     if (g_buzzer_init_tried)
@@ -169,6 +197,8 @@ static void buzzer_pwm_try_init(void)
     g_buzzer_hw_ready = RT_TRUE;
 }
 
+
+/* 设置蜂鸣器音调：freq_hz=频率，on=开/关；优先用 PWM，失败则用 GPIO 模拟 */
 static inline void buzzer_tone_set(uint32_t freq_hz, rt_bool_t on)
 {
     buzzer_pwm_try_init();
@@ -209,11 +239,15 @@ static inline void buzzer_tone_set(uint32_t freq_hz, rt_bool_t on)
 
     rt_pin_write(ALARM_BUZZER_PIN, on ? PIN_HIGH : PIN_LOW);
 }
+
+/* 以当前全局频率控制蜂鸣器开/关 */
 static inline void buzzer_write(rt_bool_t on)
 {
     buzzer_tone_set(g_buzzer_freq_hz, on);
 }
 
+
+/* 纯 GPIO 模拟方波播放音调（无 PWM 外设时使用），hz=频率，ms=持续时间 */
 static void buzzer_gpio_tone_play(uint32_t hz, uint32_t ms)
 {
     if (hz < 100U) hz = 100U;
@@ -239,6 +273,8 @@ static void buzzer_gpio_tone_play(uint32_t hz, uint32_t ms)
     rt_pin_write(ALARM_BUZZER_PIN, PIN_LOW);
 }
 
+
+/* 开门成功音效：两声上升音 */
 static void buzzer_sfx_unlock(void)
 {
     buzzer_gpio_tone_play(2400U, 120U);
@@ -246,6 +282,7 @@ static void buzzer_sfx_unlock(void)
     buzzer_gpio_tone_play(3200U, 140U);
 }
 
+/* 陌生人/识别失败音效：两声下降警告音 */
 static void buzzer_sfx_face_fail(void)
 {
     buzzer_gpio_tone_play(1500U, 180U);
@@ -253,6 +290,9 @@ static void buzzer_sfx_face_fail(void)
     buzzer_gpio_tone_play(1100U, 220U);
 }
 
+
+/* 报警蜂鸣器周期性鸣叫驱动，每帧调用一次（非阻塞）；
+ * enable=RT_FALSE 时立即停止，enable=RT_TRUE 时按 ON/OFF 时间交替鸣叫 */
 static void alarm_buzzer_update(rt_bool_t enable)
 {
     static rt_tick_t next_toggle_tick = 0;
@@ -326,6 +366,8 @@ static void face_npu_switch(rt_uint8_t next_owner)
     g_face_npu_owner = next_owner;
 }
 
+
+/* 返回人脸数据库中已注册的用户数 */
 static int face_db_count_used(void)
 {
     int count = 0;
@@ -336,6 +378,8 @@ static int face_db_count_used(void)
     return count;
 }
 
+
+/* 设置 LCD 状态栏短暂提示文字，持续 ms 毫秒后自动清除 */
 static void face_set_toast(const char *text, rt_uint32_t ms)
 {
     if (!text)
@@ -347,6 +391,8 @@ static void face_set_toast(const char *text, rt_uint32_t ms)
     g_face_toast_until = rt_tick_get() + (rt_tick_t)((ms * RT_TICK_PER_SECOND + 999U) / 1000U);
 }
 
+
+/* 重新计算人脸数据库中第一个空闲槽位，写入 g_face_db_next_slot */
 static void face_db_recompute_next_slot(void)
 {
     g_face_db_next_slot = 0;
@@ -360,6 +406,9 @@ static void face_db_recompute_next_slot(void)
     }
 }
 
+
+/* 将内存中的人脸数据库序列化并写入文件系统（/face_db.bin）
+ * 成功返回 0，失败返回负数错误码 */
 static int face_db_save_fs(void)
 {
     face_db_blob_t blob;
@@ -396,6 +445,9 @@ static int face_db_save_fs(void)
     return 0;
 }
 
+
+/* 从文件系统读取人脸数据库到内存；
+ * 返回 0=成功，-1=文件不存在，-2=读取错误，-3=格式校验失败 */
 static int face_db_load_fs(void)
 {
     int fd = open(FACE_DB_FILE_PATH, O_RDONLY, 0);
@@ -838,6 +890,9 @@ int face_key_status(void)
 }
 MSH_CMD_EXPORT(face_key_status, show enroll key pin level);
 
+
+/* 轮询注册按键，短按=触发人脸注册，长按(3秒)=清空数据库；
+ * 内置防抖与长按去重，需每帧调用一次 */
 static void face_key_poll_and_trigger_enroll(void)
 {
     static rt_uint8_t prev_pressed = 0;
@@ -880,6 +935,9 @@ static void face_key_poll_and_trigger_enroll(void)
     prev_pressed = pressed;
 }
 
+
+/* 累积 emb 到注册缓冲区，达到 FACE_ENROLL_SAMPLES 帧后取均值写入数据库；
+ * 返回注册成功的用户 ID，否则返回 -1（样本不足或参数无效）*/
 static int face_db_enroll_current(const float *emb)
 {
     if (!emb)
@@ -926,6 +984,9 @@ static int face_db_enroll_current(const float *emb)
     return slot;
 }
 
+
+/* 在数据库中查找与 emb 最匹配的用户；
+ * 返回用户 ID（0~N-1），未找到返回 -1；best_score2_milli 输出余弦²得分（×1000）*/
 static int face_db_best_match(const float *emb, int32_t *best_score2_milli)
 {
     int best_id = -1;
@@ -969,6 +1030,8 @@ static uint8_t s_lcd_line_buf[ST7789_LCD_WIDTH * 2];
 static char s_lcd_last_text[32];
 static rt_bool_t s_lcd_text_inited = RT_FALSE;
 
+
+/* 安全的 D-Cache 无效化（按32字节对齐），buf=起始地址，len_bytes=长度 */
 static inline void dcache_invalidate_safe(void *buf, rt_ubase_t len_bytes)
 {
 #if (BSP_CFG_DCACHE_ENABLED)
@@ -990,6 +1053,8 @@ static inline void dcache_invalidate_safe(void *buf, rt_ubase_t len_bytes)
 #endif
 }
 
+
+/* 安全的 D-Cache 清洗（写回内存），buf=起始地址，len_bytes=长度 */
 static inline void dcache_clean_safe(void *buf, rt_ubase_t len_bytes)
 {
 #if (BSP_CFG_DCACHE_ENABLED)
@@ -1011,6 +1076,8 @@ static inline void dcache_clean_safe(void *buf, rt_ubase_t len_bytes)
 #endif
 }
 
+
+/* LCD 开机测试：绘制彩条 + "OK" 文字，用于验证屏幕正常 */
 static void st7789_show_boot_test(void)
 {
     static const uint16_t bar_colors[8] = {
@@ -1046,6 +1113,8 @@ static void st7789_show_boot_test(void)
     }
 }
 
+
+/* 用指定 RGB565 颜色填充 LCD 矩形区域（裁剪到屏幕边界）*/
 static void st7789_fill_rect_solid(int x, int y, int w, int h, uint16_t color)
 {
     if ((w <= 0) || (h <= 0))
@@ -1080,6 +1149,8 @@ static void st7789_fill_rect_solid(int x, int y, int w, int h, uint16_t color)
     }
 }
 
+
+/* 更新 LCD 顶部状态栏文字，内容不变时跳过刷新 */
 static void st7789_status_text_update(const char *text)
 {
     const char *msg = text ? text : "";
@@ -1096,6 +1167,8 @@ static void st7789_status_text_update(const char *text)
     s_lcd_text_inited = RT_TRUE;
 }
 
+
+/* 将 RGB565 帧缓冲居中显示到 LCD，跳过顶部 skip_top 行（状态栏区域）*/
 static void st7789_blit_rgb565_center_skip_top(const uint16_t *src, int src_w, int src_h, int skip_top)
 {
     int dst_w = ST7789_LCD_WIDTH;
@@ -1129,6 +1202,8 @@ static void st7789_blit_rgb565_center_skip_top(const uint16_t *src, int src_w, i
     }
 }
 
+
+/* 在 RGB565 帧缓冲上绘制矩形边框（检测框叠加），thickness=线宽 */
 static void draw_rect_rgb565(uint16_t *buf, int w, int h, const det_box_t *box, uint16_t color, int thickness)
 {
     int x1 = box->x1;
@@ -1182,6 +1257,9 @@ static void draw_rect_rgb565(uint16_t *buf, int w, int h, const det_box_t *box, 
     }
 }
 
+
+/* 将 RGB565 帧缩放到 192×192，转换为 float HWC 格式并归一化到 [0,1]，
+ * 用于手势检测 YOLOv5 模型输入 */
 static void rgb565_to_rgb888_resize_192_float_hwc(const uint16_t *src, int16_t src_w, int16_t src_h, float *dst)
 {
     const int16_t dst_w = 192;
@@ -1224,7 +1302,7 @@ static void yolo_output_stats(const float *out_f, int16_t grid, float *out_max_r
     float max_raw = -1e9f;
     float max_final = 0.0f;
 
-    // 妯″瀷杈撳嚭鏍煎�? [1, 3, grid, grid, 7] = [batch, anchors, y, x, features]
+    // 输出张量格式 [1, 3, grid, grid, 7] = [batch, anchors, y, x, features]
     for (int16_t k = 0; k < ANCHORS; ++k)
     {
         for (int16_t i = 0; i < cells; ++i)
@@ -1233,7 +1311,7 @@ static void yolo_output_stats(const float *out_f, int16_t grid, float *out_max_r
             float obj_raw = out_f[base + 4];
             if (obj_raw > max_raw) max_raw = obj_raw;
             
-            // 璁＄畻鏈�缁堢疆淇″害 = sigmoid(obj) * max(sigmoid(class_probs))
+            // 最终置信度 = sigmoid(obj) * max(sigmoid(class_probs))
             float obj_sig = sigmoidf_fast(obj_raw);
             float max_cls = 0.0f;
             for (int c = 0; c < CLASS_NUM; c++)
@@ -1277,6 +1355,9 @@ static void input_stats_sample(const float *in_f, float *out_min, float *out_max
 #define BOX_SHIFT_Y 20
 
 #if APP_USE_FACE_PIPELINE
+
+/* 将 RGB565 帧缩放到 112×112，转换为 float NCHW 格式并做 MobileFaceNet 归一化
+ * (x - 127.5) / 128，用于人脸特征提取模型输入 */
 static void rgb565_to_rgb888_resize_112_float_nchw_norm(const uint16_t *src, int16_t src_w, int16_t src_h, float *dst)
 {
     const int16_t dst_w = 112;
@@ -1312,6 +1393,9 @@ static void rgb565_to_rgb888_resize_112_float_nchw_norm(const uint16_t *src, int
     }
 }
 
+
+/* 从 RGB565 帧中裁剪人脸检测框区域，缩放到 112×112 做 MobileFaceNet 推理;
+ * 裁剪框无效时退化为全图缩放 */
 static void rgb565_crop_resize_112_float_nchw_norm(const uint16_t *src, int16_t src_w, int16_t src_h,
                                                    int x1, int y1, int x2, int y2, float *dst)
 {
@@ -1366,17 +1450,19 @@ static void rgb565_crop_resize_112_float_nchw_norm(const uint16_t *src, int16_t 
 #include <netdb.h>
 #include <arpa/inet.h>
 
-#define HTTP_PORT 80
-#define STREAM_SERVER_IP   "192.168.31.133"
-#define STREAM_SERVER_PORT 9000
-#define PC_CTRL_WEB_PORT   8080
-#define ENABLE_STREAM_CLIENT 1
-#define ENABLE_FACE_EMBEDDING 1
+
+/* ---- 网络通信配置 ---- */
+#define HTTP_PORT 80                        /* 板载 Web 服务器监听端口 */
+#define STREAM_SERVER_IP   "192.168.31.133" /* PC 端流服务器 IP */
+#define STREAM_SERVER_PORT 9000             /* PC 端视频流接收端口 */
+#define PC_CTRL_WEB_PORT   8080             /* PC 端控制 Web 服务端口 */
+#define ENABLE_STREAM_CLIENT 1              /* 是否启用视频流推送客户端 */
+#define ENABLE_FACE_EMBEDDING 1             /* 是否启用人脸特征提取 */
 /* Run embedding only when face exists, then wait N frames before next embedding. */
-#define FACE_EMBED_COOLDOWN_FRAMES 15U
-#define FACE_EMBED_FAIL_COOLDOWN_FRAMES 120U
-#define FACE_PIPE_LOG_EVERY 0U
-#define FACE_EMB_VECTOR_LOG_EVERY 0U
+#define FACE_EMBED_COOLDOWN_FRAMES 15U  /* 嵌入推理的冷却帧数（降低负载）*/
+#define FACE_EMBED_FAIL_COOLDOWN_FRAMES 120U /* 推理失败后等待更长时间再重试 */
+#define FACE_PIPE_LOG_EVERY 0U          /* 人脸流水线日志频率（0=关闭）*/
+#define FACE_EMB_VECTOR_LOG_EVERY 0U   /* 特征向量日志频率（0=关闭）*/
 
 #define STREAM_FRAME_BYTES (CAM_WIDTH * CAM_HEIGHT * 2)
 #define STREAM_FMT_RGB565  0
@@ -1428,6 +1514,9 @@ static const char *index_html =
 "}, 200);" // Refresh every 200ms
 "</script></body></html>";
 
+
+/* 可靠发送：循环 send 直到所有数据发出，处理 EAGAIN/EWOULDBLOCK；
+ * 返回 0=成功，-1=连接断开或超时 */
 static int send_all(int fd, const uint8_t *data, size_t len)
 {
     size_t sent = 0;
@@ -1469,6 +1558,8 @@ static int send_all(int fd, const uint8_t *data, size_t len)
     return 0;
 }
 
+
+/* 向 PC 控制服务器发送小型 HTTP GET 请求，resp 接收响应缓冲（可为 NULL）*/
 static int pc_http_get_small(const char *path, char *resp, int resp_sz)
 {
     int sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -1524,6 +1615,9 @@ static int pc_http_get_small(const char *path, char *resp, int resp_sz)
     return 0;
 }
 
+
+/* 与 PC 控制服务器定期同步：拉取 LED/报警控制指令，推送运行时状态；
+ * 内部限速约 700ms 一次，主循环每帧调用 */
 static void pc_sync_with_server(void)
 {
     static rt_tick_t next_sync_tick = 0;
@@ -1617,6 +1711,8 @@ static void build_bmp_header(uint8_t *hdr, uint16_t w, uint16_t h)
     store_u32_le(&hdr[34], image_size);
 }
 
+
+/* ---- 视频流与 JPEG 缓冲区 ---- */
 static uint8_t g_stream_buf[STREAM_FRAME_BYTES] BSP_ALIGN_VARIABLE(32) BSP_PLACE_IN_SECTION(".ospi1_cs0_noinit");
 /* Use regular RAM for JPEG output - OSPI RAM has cache coherency issues for byte-by-byte access */
 static uint8_t *g_jpg_data = NULL;
@@ -1624,6 +1720,8 @@ static uint8_t *g_jpg_data = NULL;
 static volatile bool g_stream_busy = false;
 static rt_sem_t g_stream_sem = RT_NULL;
 
+
+/* 视频流推送线程：连接 PC 端 stream_server，每帧发送 16 字节头 + RGB565 原始数据 */
 static void stream_client_entry(void *param)
 {
     int sock = -1;
@@ -1665,10 +1763,10 @@ static void stream_client_entry(void *param)
             }
 
             {
-                int timeout_ms = 5000;  // 澧炲姞瓒呮椂鏃堕棿鍒�?绉�
+                int timeout_ms = 5000;  // 发送超时 5 秒
                 setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, &timeout_ms, sizeof(timeout_ms));
                 
-                // 澧炲姞鍙戦�佺紦鍐插尯澶у皬浠ユ彁楂樺悶鍚愰噺
+                // 增大发送缓冲区以提高大帧吸吐量
                 int sndbuf_size = 256 * 1024;  // 256KB
                 setsockopt(sock, SOL_SOCKET, SO_SNDBUF, &sndbuf_size, sizeof(sndbuf_size));
                 
@@ -1842,6 +1940,12 @@ static void serve_client(int conn_fd)
     closesocket(conn_fd);
 }
 
+
+/* 板载 Web 服务器线程（HTTP 端口 80）：
+ * - GET /             返回 HTML 实时预览页面
+ * - GET /capture.bmp  返回当前帧 BMP 图像
+ * - GET /api/runtime  返回 JSON 格式运行时状态
+ * - GET /api/control  接受 led/alarm/buzzer 控制参数 */
 void web_server_entry(void *param)
 {
     int listen_fd = -1;
@@ -1911,6 +2015,8 @@ void web_server_entry(void *param)
     }
 }
 
+
+/* WiFi 自动连接线程：系统稳定后连接配置的 AP */
 static void wifi_auto_connect_entry(void *parameter)
 {
     /* Wait a few seconds for the system/filesystem to fully stabilize */
@@ -2006,6 +2112,8 @@ static fsp_err_t hyper_ram_config_set(uint32_t address, uint16_t value)
     return FSP_SUCCESS;
 }
 
+
+/* 手动初始化 HyperRAM（OSPI1）：复位引脚 -> 切换 8D-8D-8D 模式 -> 读写 CR0 寄存器 */
 static void manual_hyper_ram_init(void)
 {
     LOG_I("Manually Initializing HyperRAM...");
@@ -2043,6 +2151,20 @@ static void manual_hyper_ram_init(void)
     LOG_D("Read CR0 value: 0x%x", swap16(cfg_reg0));
 }
 
+
+/* ======================================================
+ * hal_entry - 系统主入口函数（RT-Thread 启动后调用）
+ * 初始化顺序：
+ *   1. HyperRAM 手动初始化
+ *   2. GPIO 引脚配置（LED / 蜂鸣器 / 注册按键）
+ *   3. FAL 分区表 + LittleFS 文件系统挂载
+ *   4. 人脸数据库加载（APP_USE_FACE_PIPELINE 时）
+ *   5. LCD（ST7789）初始化并显示开机测试画面
+ *   6. 摄像头（CEU）初始化与参数配置
+ *   7. NPU（Ethos-U55）初始化
+ *   8. 辅助线程启动：WiFi 自动连接 / 视频流 / Web 服务器
+ *   9. 主循环：逐帧采集 → NPU 推理 → LCD 显示 → 门锁/报警决策
+ * ====================================================== */
 void hal_entry(void)
 {
     rt_kprintf("\nHello RT-Thread!\n");
@@ -2167,9 +2289,11 @@ void hal_entry(void)
     }
 
     /* 浼樺寲鎽勫儚澶村弬鏁颁互鎻愰珮鐢昏川 */
-    sensor_set_auto_gain(1, 0, 16);        // 鍚敤鑷姩澧炵泭锛屾渶澶�16dB
-    sensor_set_auto_exposure(1, 1000);      // 鍚敤鑷姩鏇濆�?    sensor_set_saturation(1);               // 澧炲姞楗卞拰搴�
-    sensor_set_contrast(1);                 // 澧炲姞瀵规瘮搴�?    sensor_set_brightness(0);               // 淇濇寔姝ｅ父浜�?
+    sensor_set_auto_gain(1, 0, 16);        // 自动增益，最大增益约 16dB
+    sensor_set_auto_exposure(1, 1000);      // 自动曝光
+    sensor_set_saturation(1);               // 适当提高饱和度
+    sensor_set_contrast(1);                 // 适当提高对比度
+    sensor_set_brightness(0);               // 亮度保持默认
     /* 4) NPU init */
     if (RM_ETHOSU_Open(&g_rm_ethosu0_ctrl, &g_rm_ethosu0_cfg) != FSP_SUCCESS)
     {
